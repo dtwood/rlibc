@@ -1,3 +1,4 @@
+#[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 use libc::c_void;
 
 pub mod ctype;
@@ -9,3 +10,21 @@ pub mod time;
 #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 #[allow(non_camel_case_types)]
 pub type caddr_t = *mut c_void;
+
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+use libc::{c_int, c_uchar, timeval};
+
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[allow(non_camel_case_types)]
+pub struct itimerval {
+    pub it_interval: timeval,
+    pub it_value: timeval,
+}
+
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[allow(non_camel_case_types)]
+pub struct file_handle {
+    pub handle_bytes: u32,
+    pub handle_type: c_int,
+    pub f_handle: [c_uchar; 0],
+}

@@ -6,7 +6,11 @@ use libc::rlimit;
 #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
 use libci::caddr_t;
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-use libc::intptr_t;
+use libc::{c_ulong, intptr_t};
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+use libci::errno::errno;
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+use libc::ENOMEM;
 
 
 use syscalls::{sys_getrlimit, sys_mmap, sys_munmap};
@@ -35,10 +39,10 @@ pub unsafe extern "C" fn brk(addr: *const c_void) -> c_int {
 pub unsafe extern "C" fn sbrk(increment: intptr_t) -> *const c_void {
     let oldbrk = sys_brk(0) as *const u8;
     if increment != 0 {
-        let newbrk = offset(oldbrk, increment as isize);
+        let newbrk = oldbrk.offset(increment as isize);
         if sys_brk(newbrk as c_ulong) as *const u8 != newbrk {
             errno = ENOMEM;
-            -1 as *const c_void
+            !0 as *const c_void
         } else {
             oldbrk as *const c_void
         }

@@ -1,4 +1,6 @@
 use libc::{c_char, c_int, c_void, size_t, ssize_t, c_uint};
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+use libc::c_ulong;
 use libc::off_t;
 use libc::{pid_t, uid_t, gid_t};
 use syscalls::{sys_unlink, sys_rmdir, sys_read, sys_write, sys_close, sys_lseek};
@@ -59,7 +61,7 @@ pub unsafe extern "C" fn pread(fd: c_int,
                                offset: off_t)
                                -> ssize_t {
     (forward!(sys_pread64,
-              fd as ulong_t,
+              fd as c_ulong,
               buf as *mut c_char,
               count,
               offset) as ssize_t)
