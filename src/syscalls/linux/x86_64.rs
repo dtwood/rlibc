@@ -105,7 +105,14 @@ syscall!(005, sys_fstat, uint_t, *mut stat);
 syscall!(006, sys_lstat, *const char_t, *mut stat);
 syscall!(007, sys_poll, *mut pollfd, uint_t, long_t);
 syscall!(008, sys_lseek, uint_t, off_t, uint_t);
-syscall!(009, sys_mmap, ulong_t, ulong_t, ulong_t, ulong_t, ulong_t, ulong_t);
+syscall!(009,
+         sys_mmap,
+         ulong_t,
+         ulong_t,
+         ulong_t,
+         ulong_t,
+         ulong_t,
+         ulong_t);
 syscall!(010, sys_mprotect, ulong_t, size_t, ulong_t);
 syscall!(011, sys_munmap, ulong_t, size_t);
 syscall!(012, sys_brk, ulong_t);
@@ -312,7 +319,13 @@ syscall!(212, sys_lookup_dcookie, u64, long_t, long_t);
 syscall!(213, sys_epoll_create, int_t);
 // syscall!(214, sys_epoll_ctl_old, NOT);
 // syscall!(215, sys_epoll_wait_old, NOT);
-syscall!(216, sys_remap_file_pages, ulong_t, ulong_t, ulong_t, ulong_t, ulong_t);
+syscall!(216,
+         sys_remap_file_pages,
+         ulong_t,
+         ulong_t,
+         ulong_t,
+         ulong_t,
+         ulong_t);
 syscall!(217, sys_getdents64, uint_t, *mut linux_dirent64, uint_t);
 syscall!(218, sys_set_tid_address, *mut int_t);
 syscall!(219, sys_restart_syscall);

@@ -1,22 +1,20 @@
 //! Process lifetime management
 
-use types::{int_t};
+use libc::c_int;
 use syscalls::*;
-use rust::prelude::*;
-use posix::signal::{raise, SIGABRT};
+use posix::signal::raise;
+use libc::SIGABRT;
 
-static mut ATEXIT_FNS: [Option<extern "C" fn()>; 32] = [
-    None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None,
-];
+static mut ATEXIT_FNS: [Option<extern "C" fn()>; 32] =
+    [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+     None, None];
 
 /// Terminates the process normally, performing the regular cleanup.
 /// All C streams are closed, and all files created with tmpfile are removed.
 /// Status can be zero or EXIT_SUCCESS, or EXIT_FAILURE.
 #[no_mangle]
-pub unsafe extern fn exit(x: int_t) -> ! {
+pub unsafe extern "C" fn exit(x: c_int) -> ! {
     for func in ATEXIT_FNS.iter().rev() {
         if let &Some(func) = func {
             func();
@@ -27,25 +25,28 @@ pub unsafe extern fn exit(x: int_t) -> ! {
 
 /// _Exit is a synonym for _exit
 #[no_mangle]
-pub extern fn _Exit(x: int_t) -> ! {
+#[allow(non_snake_case)]
+pub extern "C" fn _Exit(x: c_int) -> ! {
     _exit(x);
 }
 
 #[no_mangle]
-pub extern fn _exit(x: int_t) -> ! {
-    unsafe {sys_exit(x);}
-    loop { }; // for divergence check
+pub extern "C" fn _exit(x: c_int) -> ! {
+    unsafe {
+        sys_exit(x);
+    }
+    loop {} // for divergence check
 }
 
 #[no_mangle]
-pub unsafe extern fn abort() {
+pub unsafe extern "C" fn abort() {
     raise(SIGABRT);
 }
 
 
 #[no_mangle]
 /// Note: this doesn't check for a null argument, sparing a branch.
-pub unsafe extern fn atexit(func: Option<extern "C" fn()>) -> int_t {
+pub unsafe extern "C" fn atexit(func: Option<extern "C" fn()>) -> c_int {
     for i in &mut ATEXIT_FNS {
         if i.is_none() {
             *i = func;
