@@ -1,7 +1,6 @@
 //! Process lifetime management
 
 use libc::c_int;
-use syscalls::sys_exit;
 use posix::signal::raise;
 use libc::SIGABRT;
 
@@ -33,7 +32,7 @@ pub extern "C" fn _Exit(x: c_int) -> ! {
 #[no_mangle]
 pub extern "C" fn _exit(x: c_int) -> ! {
     unsafe {
-        sys_exit(x);
+        syscall!(EXIT, x);
         ::core::intrinsics::unreachable();
     }
 }

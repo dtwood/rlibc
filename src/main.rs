@@ -9,5 +9,4 @@ fn main() {
 
 fn asdf() {
     println!("Hello, {}!", "World");
-
 }

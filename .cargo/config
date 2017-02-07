@@ -1,5 +1,5 @@
 [target.x86_64-apple-darwin]
 rustflags = ["-C", "link-arg=-nostdlib"]
 
-[target.x86_64-unknown-linux-none]
+[target.x86_64-unknown-linux-gnu]
 rustflags = ["-C", "link-arg=-nostdlib"]

@@ -1,7 +1,6 @@
 use core::mem::transmute;
 use core::ptr;
 use libc::{c_int, c_char, c_long, time_t, tm, timeval, timezone};
-use syscalls::sys_gettimeofday;
 
 #[no_mangle]
 pub unsafe extern "C" fn time(time: *mut time_t) -> time_t {
@@ -9,7 +8,7 @@ pub unsafe extern "C" fn time(time: *mut time_t) -> time_t {
         tv_sec: 0xabcd,
         tv_usec: 0xabcd,
     };
-    if forward!(sys_gettimeofday, &mut now as *mut timeval, ptr::null_mut()) >= 0 {
+    if syscall!(GETTIMEOFDAY, &mut now as *mut timeval, ptr::null_mut() as *mut timezone) as isize >= 0 {
         if time != ptr::null_mut() {
             *time = now.tv_sec;
         }
@@ -21,7 +20,7 @@ pub unsafe extern "C" fn time(time: *mut time_t) -> time_t {
 
 #[no_mangle]
 pub unsafe extern "C" fn gettimeofday(tv: *mut timeval, tz: *mut timezone) -> c_int {
-    forward!(sys_gettimeofday, tv, tz)
+    syscall!(GETTIMEOFDAY, tv, tz) as c_int
 }
 
 #[allow(non_upper_case_globals)]

@@ -2,11 +2,14 @@
 name = "c"
 version = "0.1.0"
 authors = ["Julian Orth <ju.orth@gmail.com>", "Alex Chandel <alexchandel@gmail.com>", "David Wood <devel@dtwood.uk>"]
-build = true
+
+[lib]
+crate-type = [ "staticlib", "rlib" ]
 
 [dependencies]
 libc = "*"
-syscall = "*"
+spin = "*"
+syscall = { path = "syscall-rs" }
 rlibc = "*"
 
 [build-dependencies]

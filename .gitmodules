@@ -1,0 +1,3 @@
+[submodule "test/libc-test"]
+	path = test/libc-test
+	url = git://repo.or.cz/libc-test

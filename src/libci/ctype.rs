@@ -1,7 +1,7 @@
 use libc::c_int;
 
 #[no_mangle]
-pub extern "C" fn isalnum(c: c_int) -> c_int {
+pub extern "C" fn isalnum(c: ::libc::c_int) -> ::libc::c_int {
     match c as u8 as char {
         'a'...'z' => 1,
         'A'...'Z' => 1,
