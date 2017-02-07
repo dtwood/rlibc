@@ -1,6 +1,6 @@
 //! File access and modification
 
-use libc::{c_char, c_int, timeval, utimbuf};
+use libc_types::{c_char, c_int, timeval, utimbuf};
 
 /// Change file last access and modification times.
 #[no_mangle]

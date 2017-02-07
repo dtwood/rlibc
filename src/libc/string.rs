@@ -1,4 +1,4 @@
-use libc::{c_uchar, c_char, c_int, size_t};
+use libc_types::{c_uchar, c_char, c_int, size_t};
 
 #[no_mangle]
 pub unsafe extern "C" fn memcpy(dest: *mut c_char, src: *const c_char, n: size_t) -> *mut c_char {

@@ -1,8 +1,8 @@
-use libc::{c_char, c_int, c_void, size_t, ssize_t, c_uint, off_t, pid_t, uid_t, gid_t};
+use libc_types::{c_char, c_int, c_void, size_t, ssize_t, c_uint, off_t, pid_t, uid_t, gid_t};
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-use libc::c_ulong;
+use libc_types::c_ulong;
 
-use libci::errno::errno;
+use libc::errno::errno;
 
 // File and filesystem manipulation
 

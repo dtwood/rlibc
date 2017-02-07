@@ -153,7 +153,7 @@ int main(int argc, char const *argv[]) {
 
   puts("Hello, world!");
   puts("Hello, world!");
-  printf("%i\n", getenv("HOME"));
+  puts(getenv("HOME"));
   puts("Hello, world!");
 
   memcmp("bbb", "aaa", 3);

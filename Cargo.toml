@@ -9,7 +9,7 @@ crate-type = [ "staticlib", "rlib" ]
 [dependencies]
 libc = "*"
 spin = "*"
-syscall = { path = "syscall-rs" }
+syscall = { path = "vendor/syscall.rs" }
 rlibc = "*"
 
 [build-dependencies]

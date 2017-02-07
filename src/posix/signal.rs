@@ -1,5 +1,5 @@
-use libc::{c_int, c_void, pid_t};
-use libci::errno::errno;
+use libc_types::{c_int, c_void, pid_t};
+use libc::errno::errno;
 use posix::unistd::getpid;
 
 #[allow(non_camel_case_types)]
@@ -25,7 +25,7 @@ pub unsafe extern "C" fn raise(sig: c_int) -> c_int {
 /// Specifies a way to handle the signals with the signal number specified by sig.
 #[no_mangle]
 pub unsafe extern "C" fn signal(_sig: c_int, _func: sighandler_t) -> sighandler_t {
-    ::core::mem::transmute(_func)
+    ::std::mem::transmute(0usize)
 }
 
 /// Send a signal to a process or a group of processes.

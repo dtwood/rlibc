@@ -1,8 +1,8 @@
-use core::slice::from_raw_parts;
-use libc::{c_char, c_int, size_t};
+use std::slice::from_raw_parts;
+use libc_types::{c_char, c_int, size_t};
 #[cfg(target_os = "macos")]
-use libci::string::{strlen, strncpy};
-use libci::string::{strnlen, strncmp};
+use libc::string::{strlen, strncpy};
+use libc::string::{strnlen, strncmp};
 use posix::pm::_exit;
 
 pub static mut ARGV: *const *const c_char = 0 as *const *const c_char;

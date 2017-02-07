@@ -1,6 +1,6 @@
 //! Dynamic linking or loading is evil and thus not supported.
 
-use libc::{c_char, c_int, c_void};
+use libc_types::{c_char, c_int, c_void};
 use posix::pm::exit;
 
 #[no_mangle]

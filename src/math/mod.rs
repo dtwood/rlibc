@@ -2,7 +2,9 @@
 //! this needs unit tests
 //! some of the assembly could be rewritten in Rust
 
-use libc::{size_t, c_int};
+#![cfg_attr(feature = "cargo-clippy", allow(float_cmp))]
+
+use libc_types::{size_t, c_int};
 
 #[allow(non_camel_case_types)]
 type f128 = f64;
@@ -661,58 +663,74 @@ pub fn fdim(x: f64, y: f64) -> f64 {
 }
 
 #[no_mangle]
+#[cfg_attr(feature="cargo-clippy", allow(if_same_then_else))]
 pub fn fmaxf(x: f32, y: f32) -> f32 {
     if x.is_nan() {
         y
     } else if y.is_nan() {
         x
-    } else if x.is_sign_negative() != y.is_sign_negative() {
-        /* handle signed zeroes, see C99 Annex F.9.9.2 */
-        if x.is_sign_negative() { y } else { x }
+    } else if x.is_sign_negative() && y.is_sign_positive() {
+        y
+    } else if x.is_sign_positive() && y.is_sign_negative() {
+        x
+    } else if x < y {
+        y
     } else {
-        if x < y { y } else { x }
+        x
     }
 }
 
 #[no_mangle]
+#[cfg_attr(feature="cargo-clippy", allow(if_same_then_else))]
 pub fn fmax(x: f64, y: f64) -> f64 {
     if x.is_nan() {
         y
     } else if y.is_nan() {
         x
-    } else if x.is_sign_negative() != y.is_sign_negative() {
-        /* handle signed zeroes, see C99 Annex F.9.9.2 */
-        if x.is_sign_negative() { y } else { x }
+    } else if x.is_sign_negative() && y.is_sign_positive() {
+        y
+    } else if x.is_sign_positive() && y.is_sign_negative() {
+        x
+    } else if x < y {
+        y
     } else {
-        if x < y { y } else { x }
+        x
     }
 }
 
 #[no_mangle]
+#[cfg_attr(feature="cargo-clippy", allow(if_same_then_else))]
 pub fn fminf(x: f32, y: f32) -> f32 {
     if x.is_nan() {
         y
     } else if y.is_nan() {
         x
-    } else if x.is_sign_negative() != y.is_sign_negative() {
-        /* handle signed zeroes, see C99 Annex F.9.9.2 */
-        if x.is_sign_negative() { x } else { y }
+    } else if x.is_sign_positive() && y.is_sign_negative() {
+        y
+    } else if x.is_sign_negative() && y.is_sign_positive() {
+        x
+    } else if x > y {
+        y
     } else {
-        if x < y { x } else { y }
+        x
     }
 }
 
 #[no_mangle]
+#[cfg_attr(feature="cargo-clippy", allow(if_same_then_else))]
 pub fn fmin(x: f64, y: f64) -> f64 {
     if x.is_nan() {
         y
     } else if y.is_nan() {
         x
-    } else if x.is_sign_negative() != y.is_sign_negative() {
-        /* handle signed zeroes, see C99 Annex F.9.9.2 */
-        if x.is_sign_negative() { x } else { y }
+    } else if x.is_sign_positive() && y.is_sign_negative() {
+        y
+    } else if x.is_sign_negative() && y.is_sign_positive() {
+        x
+    } else if x > y {
+        y
     } else {
-        if x < y { x } else { y }
+        x
     }
 }
 

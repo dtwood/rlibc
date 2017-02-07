@@ -1,8 +1,8 @@
 //! Process lifetime management
 
-use libc::c_int;
+use libc_types::c_int;
 use posix::signal::raise;
-use libc::SIGABRT;
+use libc_types::SIGABRT;
 
 static mut ATEXIT_FNS: [Option<extern "C" fn()>; 32] =
     [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -11,11 +11,11 @@ static mut ATEXIT_FNS: [Option<extern "C" fn()>; 32] =
 
 /// Terminates the process normally, performing the regular cleanup.
 /// All C streams are closed, and all files created with tmpfile are removed.
-/// Status can be zero or EXIT_SUCCESS, or EXIT_FAILURE.
+/// Status can be zero or `EXIT_SUCCESS`, or `EXIT_FAILURE`.
 #[no_mangle]
 pub unsafe extern "C" fn exit(x: c_int) -> ! {
-    for func in ATEXIT_FNS.iter().rev() {
-        if let &Some(func) = func {
+    for &func in ATEXIT_FNS.iter().rev() {
+        if let Some(func) = func {
             func();
         }
     }
@@ -33,14 +33,14 @@ pub extern "C" fn _Exit(x: c_int) -> ! {
 pub extern "C" fn _exit(x: c_int) -> ! {
     unsafe {
         syscall!(EXIT, x);
-        ::core::intrinsics::unreachable();
+        ::std::intrinsics::unreachable();
     }
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn abort() -> ! {
     raise(SIGABRT);
-    ::core::intrinsics::unreachable();
+    ::std::intrinsics::unreachable();
 }
 
 
@@ -53,5 +53,6 @@ pub unsafe extern "C" fn atexit(func: Option<extern "C" fn()>) -> c_int {
             return 0;
         }
     }
-    return 1;
+
+    1
 }

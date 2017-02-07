@@ -1,4 +1,4 @@
-use libc::c_int;
+use libc_types::c_int;
 
 #[no_mangle]
 #[allow(non_upper_case_globals)]

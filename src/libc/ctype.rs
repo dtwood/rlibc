@@ -1,10 +1,10 @@
-use libc::c_int;
+use libc_types::c_int;
 
 #[no_mangle]
-pub extern "C" fn isalnum(c: ::libc::c_int) -> ::libc::c_int {
+pub extern "C" fn isalnum(c: c_int) -> c_int {
     match c as u8 as char {
-        'a'...'z' => 1,
-        'A'...'Z' => 1,
+        'a'...'z' |
+        'A'...'Z' |
         '0'...'9' => 1,
         _ => 0,
     }
@@ -13,7 +13,7 @@ pub extern "C" fn isalnum(c: ::libc::c_int) -> ::libc::c_int {
 #[no_mangle]
 pub extern "C" fn isalpha(c: c_int) -> c_int {
     match c as u8 as char {
-        'a'...'z' => 1,
+        'a'...'z' |
         'A'...'Z' => 1,
         _ => 0,
     }
@@ -30,7 +30,7 @@ pub extern "C" fn isblank(c: c_int) -> c_int {
 #[no_mangle]
 pub extern "C" fn iscntrl(c: c_int) -> c_int {
     match c as u8 as char {
-        '\x00'...'\x19' => 1,
+        '\x00'...'\x19' |
         '\x7f' => 1,
         _ => 0,
     }
@@ -92,8 +92,8 @@ pub extern "C" fn isupper(c: c_int) -> c_int {
 #[no_mangle]
 pub extern "C" fn isxdigit(c: c_int) -> c_int {
     match c as u8 as char {
-        '0'...'9' => 1,
-        'A'...'F' => 1,
+        '0'...'9' |
+        'A'...'F' |
         'a'...'f' => 1,
         _ => 0,
     }

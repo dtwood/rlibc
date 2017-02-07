@@ -1,6 +1,5 @@
-use core::mem::transmute;
-use core::ptr;
-use libc::{c_int, c_char, c_long, time_t, tm, timeval, timezone};
+use std::ptr;
+use libc_types::{c_int, c_char, c_long, time_t, tm, timeval, timezone};
 
 #[no_mangle]
 pub unsafe extern "C" fn time(time: *mut time_t) -> time_t {
@@ -9,7 +8,7 @@ pub unsafe extern "C" fn time(time: *mut time_t) -> time_t {
         tv_usec: 0xabcd,
     };
     if syscall!(GETTIMEOFDAY, &mut now as *mut timeval, ptr::null_mut() as *mut timezone) as isize >= 0 {
-        if time != ptr::null_mut() {
+        if time.is_null() {
             *time = now.tv_sec;
         }
         now.tv_sec
@@ -71,11 +70,23 @@ fn monthlen(ly: bool, mon: c_int) -> u64 {
 
 /// TODO negative times
 #[no_mangle]
+
 pub unsafe extern "C" fn gmtime(timer: *const time_t) -> *const tm {
     let time: time_t = *timer;
     let dayclock: u64 = time as u64 % SECS_DAY;
     let mut dayno: u64 = time as u64 / SECS_DAY;
     let mut year: c_int = EPOCH_YR;
+
+    while dayno >= yearsize(year) {
+        dayno -= yearsize(year);
+        year += 1;
+    }
+
+    let mut mon = 0;
+    while dayno >= monthlen(leapyear(year), mon) {
+        dayno -= monthlen(leapyear(year), mon);
+        mon += 1;
+    }
 
     gmtime_tm = tm {
         tm_sec: (dayclock % 60) as c_int,
@@ -84,22 +95,11 @@ pub unsafe extern "C" fn gmtime(timer: *const time_t) -> *const tm {
         tm_wday: ((dayno + 4) % 7) as c_int, // day 0 was a thursday
 
         tm_year: {
-            while dayno >= yearsize(year) {
-                dayno -= yearsize(year);
-                year += 1;
-            }
             year - YR_1900
         },
 
         tm_yday: dayno as c_int,
-        tm_mon: {
-            let mut mon = 0;
-            while dayno >= monthlen(leapyear(year), mon) {
-                dayno -= monthlen(leapyear(year), mon);
-                mon += 1;
-            }
-            mon
-        },
+        tm_mon: mon,
 
         tm_mday: dayno as c_int + 1,
         tm_isdst: 0,
@@ -130,10 +130,10 @@ pub unsafe extern "C" fn localtime_r(timer: *const time_t) -> *const tm {
     gmtime_r(timer)
 }
 
-/// Convert a GMT `struct tm` to a time_t.
+/// Convert a GMT `struct tm` to a `time_t`.
 #[no_mangle]
 pub unsafe extern "C" fn timegm(timer_ptr: *const tm) -> time_t {
-    let timer: &tm = transmute(timer_ptr);
+    let timer: &tm = &*timer_ptr;
     let yr = timer.tm_year + EPOCH_YR;
 
     let mut t = (yr as time_t - 1970) * (yearsize(yr) * SECS_DAY) as time_t;
